@@ -7,7 +7,7 @@ TD-error  = (reward + after_state's value) - value
 TD-target = (reward + after_state's value)
 ```
 
-## This is my CGI_Lab first Project , need to complete 5 TODO function.
+## The CGI_Lab Project , need to complete 5 TODO function.
 
 * class pattern :: estimate
 * class pattern :: update
