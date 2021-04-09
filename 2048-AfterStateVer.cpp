@@ -604,6 +604,8 @@ public:
 	 *  invalid action (cause after == before or score == -1)
 	 */
 	bool is_valid() const {
+		// std::cout<<before<<after;
+
 		if (std::isnan(esti)) {
 			error << "numeric exception" << std::endl;
 			std::exit(1);
@@ -702,7 +704,7 @@ public:
 		for (state* move = after; move != after + 4; move++) {
 			if (move->assign(b)) {
 				// TODO
-				move->set_value(move->reward()+estimate(move->after_state())); // v = r + afterV
+				move->set_value(move->reward() + estimate(move->after_state()));
 				if (move->value() > best->value())
 					best = move;
 			} else {
@@ -729,14 +731,13 @@ public:
 	 */
 	void update_episode(std::vector<state>& path, float alpha = 0.1) const {
 		// TODO
-		float next_Value =0; // in terminal state the next_Value is 0
+		float real_Value =0; // in terminal state the next_Value is 0
 		std::vector<state> :: reverse_iterator ri;
 		path.pop_back(); // the last one is invalid , we don't need;
 		for(ri = path.rbegin(); ri != path.rend() ; ri++){
-			float error = (ri->reward()+next_Value) - ri->value(); // ri->reward()+next_Value is TD-target
+			float error = real_Value - estimate(ri->after_state());
 			// According to the formula : V = V + alpha*error
-			float update_value = update(ri->after_state(),alpha*error);//func. update's return is update value
-			next_Value=ri->reward()+update_value;
+			real_Value=ri->reward()+update(ri->after_state(),alpha*error);
 		}
 	}
 
@@ -854,10 +855,9 @@ private:
 int main(int argc, const char* argv[]) {
 	info << "TDL2048-Demo" << std::endl;
 	learning tdl;
-
 	// set the learning parameters
 	float alpha = 0.1;
-	size_t total = 100000;
+	size_t total = 10000;
 	unsigned seed;
 	__asm__ __volatile__ ("rdtsc" : "=a" (seed));
 	info << "alpha = " << alpha << std::endl;
